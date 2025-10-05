@@ -1,0 +1,27 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Index Scan",
+      "Relation Name": "customers",
+      "Alias": "c",
+      "Index Name": "idx_customers_city",
+      "Startup Cost": 0.29,
+      "Total Cost": 1000.00,
+      "Plan Rows": 50000,
+      "Plan Width": 200,
+      "Actual Startup Time": 0.100,
+      "Actual Total Time": 50.000,
+      "Actual Rows": 50000,
+      "Actual Loops": 1,
+      "Index Cond": "(city = 'New York'::text)",
+      "Buffers": {
+        "Shared Hit Blocks": 100,
+        "Shared Read Blocks": 0,
+        "Temp Read Blocks": 0,
+        "Temp Written Blocks": 0
+      }
+    },
+    "Planning Time": 0.300,
+    "Execution Time": 50.300
+  }
+]

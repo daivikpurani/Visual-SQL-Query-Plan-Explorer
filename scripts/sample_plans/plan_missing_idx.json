@@ -1,0 +1,66 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Hash Join",
+      "Parent Relationship": "Outer",
+      "Join Type": "Inner",
+      "Startup Cost": 1000.00,
+      "Total Cost": 15000.00,
+      "Plan Rows": 50000,
+      "Plan Width": 300,
+      "Actual Startup Time": 100.000,
+      "Actual Total Time": 1200.000,
+      "Actual Rows": 50000,
+      "Actual Loops": 1,
+      "Hash Cond": "(o.customer_id = c.id)",
+      "Plans": [
+        {
+          "Node Type": "Seq Scan",
+          "Relation Name": "customers",
+          "Alias": "c",
+          "Parent Relationship": "Outer",
+          "Startup Cost": 0.00,
+          "Total Cost": 5000.00,
+          "Plan Rows": 200000,
+          "Plan Width": 200,
+          "Actual Startup Time": 0.000,
+          "Actual Total Time": 800.000,
+          "Actual Rows": 200000,
+          "Actual Loops": 1,
+          "Filter": "(city = 'Los Angeles'::text)",
+          "Rows Removed by Filter": 150000,
+          "Buffers": {
+            "Shared Hit Blocks": 0,
+            "Shared Read Blocks": 3000,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          }
+        },
+        {
+          "Node Type": "Seq Scan",
+          "Relation Name": "orders",
+          "Alias": "o",
+          "Parent Relationship": "Inner",
+          "Startup Cost": 0.00,
+          "Total Cost": 10000.00,
+          "Plan Rows": 100000,
+          "Plan Width": 100,
+          "Actual Startup Time": 0.000,
+          "Actual Total Time": 400.000,
+          "Actual Rows": 100000,
+          "Actual Loops": 1,
+          "Filter": "(order_date >= '2024-01-01 00:00:00'::timestamp without time zone)",
+          "Rows Removed by Filter": 50000,
+          "Buffers": {
+            "Shared Hit Blocks": 0,
+            "Shared Read Blocks": 2000,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          }
+        }
+      ]
+    },
+    "Planning Time": 1.200,
+    "Execution Time": 1201.200
+  }
+]
