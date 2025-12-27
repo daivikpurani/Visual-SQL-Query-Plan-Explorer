@@ -1,18 +1,171 @@
 # Visual SQL Plan Explorer
 
-A modern, interactive tool for analyzing PostgreSQL query execution plans. Upload your `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` output and get instant visualizations, performance insights, and index recommendations.
+## Project Overview
 
-![Visual SQL Plan Explorer](https://via.placeholder.com/800x400/667eea/ffffff?text=Visual+SQL+Plan+Explorer)
+This is a learning project implemented in a personal capacity to explore PostgreSQL query optimization and web application development. The tool transforms PostgreSQL query execution plans into interactive visualizations, helping developers understand query performance characteristics.
+
+## Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "User Interface"
+        UI[React Frontend<br/>TypeScript + Vite]
+        Canvas[PlanCanvas<br/>React Flow Visualization]
+        Sidebar[PlanSidebar<br/>Node Details]
+        Advisor[IndexAdvisor<br/>Recommendations]
+        Compare[PlanCompare<br/>Side-by-side Analysis]
+    end
+    
+    subgraph "Backend API"
+        API[FastAPI Server<br/>Python 3.11+]
+        Parse[Parse Endpoint<br/>/plans/parse]
+        CompareAPI[Compare Endpoint<br/>/plans/compare]
+        AdviseAPI[Advise Endpoint<br/>/advise]
+    end
+    
+    subgraph "Core Processing"
+        Normalize[normalize.py<br/>Parse EXPLAIN JSON]
+        Metrics[metrics.py<br/>Critical Path & Heat Scores]
+        AdvisorCore[advisor.py<br/>Index Suggestions]
+    end
+    
+    subgraph "Data Flow"
+        JSON[PostgreSQL EXPLAIN<br/>ANALYZE, BUFFERS, FORMAT JSON]
+        PlanDoc[PlanDoc<br/>Normalized Plan Structure]
+        Nodes[Nodes & Edges<br/>Graph Representation]
+    end
+    
+    UI --> Canvas
+    UI --> Sidebar
+    UI --> Advisor
+    UI --> Compare
+    
+    Canvas --> API
+    Sidebar --> API
+    Advisor --> AdviseAPI
+    Compare --> CompareAPI
+    
+    API --> Parse
+    API --> CompareAPI
+    API --> AdviseAPI
+    
+    Parse --> Normalize
+    Normalize --> Metrics
+    Metrics --> AdvisorCore
+    
+    JSON --> Parse
+    Parse --> PlanDoc
+    PlanDoc --> Nodes
+    Nodes --> Canvas
+    
+    style UI fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
+    style API fill:#06b6d4,stroke:#333,stroke-width:2px,color:#fff
+    style Normalize fill:#10b981,stroke:#333,stroke-width:2px,color:#fff
+    style Metrics fill:#10b981,stroke:#333,stroke-width:2px,color:#fff
+    style AdvisorCore fill:#10b981,stroke:#333,stroke-width:2px,color:#fff
+```
+
+## Workflow Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Normalizer
+    participant Metrics
+    participant Advisor
+    
+    User->>Frontend: Upload EXPLAIN JSON
+    Frontend->>Backend: POST /plans/parse
+    Backend->>Normalizer: Parse JSON to PlanDoc
+    Normalizer->>Backend: Return nodes & edges
+    Backend->>Metrics: Compute critical path
+    Metrics->>Backend: Return path & heat scores
+    Backend->>Frontend: Return normalized plan
+    Frontend->>Frontend: Render graph visualization
+    
+    User->>Frontend: Click node
+    Frontend->>Frontend: Display node details
+    
+    User->>Frontend: Request index advice
+    Frontend->>Backend: POST /advise
+    Backend->>Advisor: Analyze plan for indexes
+    Advisor->>Backend: Return suggestions
+    Backend->>Frontend: Return index SQL
+    Frontend->>User: Display recommendations
+    
+    User->>Frontend: Compare two plans
+    Frontend->>Backend: POST /plans/compare
+    Backend->>Normalizer: Parse both plans
+    Backend->>Metrics: Compute deltas
+    Backend->>Frontend: Return comparison
+    Frontend->>User: Side-by-side view
+```
+
+## System Components
+
+```mermaid
+graph LR
+    subgraph "Frontend Components"
+        A[UploadBox<br/>File/JSON Input]
+        B[PlanCanvas<br/>Graph Visualization]
+        C[PlanSidebar<br/>Node Inspector]
+        D[MetricsBar<br/>Summary Stats]
+        E[IndexAdvisor<br/>Recommendations]
+        F[PlanCompare<br/>Dual View]
+        G[DemoScript<br/>Tutorial Mode]
+    end
+    
+    subgraph "Backend Modules"
+        H[normalize.py<br/>JSON Parser]
+        I[metrics.py<br/>Path Analysis]
+        J[advisor.py<br/>Index Detection]
+    end
+    
+    A --> B
+    B --> C
+    B --> D
+    D --> E
+    A --> F
+    A --> G
+    
+    H --> I
+    I --> J
+    
+    style A fill:#e0e7ff
+    style B fill:#c7d2fe
+    style C fill:#a5b4fc
+    style D fill:#818cf8
+    style E fill:#6366f1
+    style F fill:#4f46e5
+    style G fill:#4338ca
+    style H fill:#86efac
+    style I fill:#4ade80
+    style J fill:#22c55e
+```
+
+## About
+
+Visual SQL Plan Explorer is a learning project designed to transform PostgreSQL query execution plans into actionable performance insights. Built with FastAPI and React, the tool parses `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` output and provides interactive visualizations, automated bottleneck detection, and intelligent index recommendations.
+
+The application implements graph-based algorithms to compute critical execution paths, heat scores for performance hotspots, and pattern-matching heuristics to identify missing indexes. The frontend leverages React Flow for interactive plan exploration, while the backend uses Pydantic models for type-safe plan normalization and metric computation.
+
+This project serves as an educational exploration of database query optimization, web application architecture, and data visualization techniques.
 
 ## Features
 
-- 🔍 **Interactive Plan Visualization** - Drag, zoom, and explore query plans with React Flow
-- 🎯 **Critical Path Analysis** - Identify bottlenecks with automatic critical path highlighting
-- 🌡️ **Heatmap Visualization** - Color-coded nodes showing performance hotspots
-- 💡 **Index Advisor** - Get intelligent suggestions for missing indexes
-- 📊 **Plan Comparison** - Side-by-side comparison of different query plans
-- 🎨 **Presentation Mode** - Clean, enlarged interface for demos and interviews
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile devices
+- **Interactive Plan Visualization** - Drag, zoom, and explore query plans with React Flow graph visualization
+- **Critical Path Analysis** - Automatic identification and highlighting of the slowest execution path through the plan tree
+- **Heatmap Visualization** - Color-coded nodes showing performance hotspots based on execution time, buffer reads, and row estimation accuracy
+- **Performance Metrics Dashboard** - Real-time display of total execution time, cost, row counts, and warning summaries
+- **Index Advisor** - Intelligent suggestions for missing indexes with ready-to-use SQL statements
+- **Plan Comparison** - Side-by-side comparison of query plans with performance deltas and diff annotations
+- **Demo Mode** - Interactive demonstration with pre-loaded sample plans showcasing optimization scenarios
+- **Presentation Mode** - Clean, enlarged interface optimized for demos and technical presentations
+- **Node Detail Inspector** - Click any plan node to view detailed execution metrics, buffer statistics, and warnings
+- **Automatic Warning Detection** - Identifies common performance issues including sequential scans, high buffer reads, and row estimation errors
+- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
 
 ## Quick Start
 
@@ -258,4 +411,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ for the PostgreSQL community**
+Built for the PostgreSQL community

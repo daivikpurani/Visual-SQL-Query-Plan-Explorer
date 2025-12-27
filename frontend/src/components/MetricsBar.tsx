@@ -54,7 +54,7 @@ const MetricsBar: React.FC<MetricsBarProps> = ({ plan }) => {
           <ul>
             {summary.warnings.map((warning, index) => (
               <li key={index} className="warning-item">
-                ⚠️ {warning}
+                {warning}
               </li>
             ))}
           </ul>
