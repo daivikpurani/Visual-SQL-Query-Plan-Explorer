@@ -103,48 +103,6 @@ sequenceDiagram
     Frontend->>User: Side-by-side view
 ```
 
-## System Components
-
-```mermaid
-graph LR
-    subgraph "Frontend Components"
-        A[UploadBox<br/>File/JSON Input]
-        B[PlanCanvas<br/>Graph Visualization]
-        C[PlanSidebar<br/>Node Inspector]
-        D[MetricsBar<br/>Summary Stats]
-        E[IndexAdvisor<br/>Recommendations]
-        F[PlanCompare<br/>Dual View]
-        G[DemoScript<br/>Tutorial Mode]
-    end
-    
-    subgraph "Backend Modules"
-        H[normalize.py<br/>JSON Parser]
-        I[metrics.py<br/>Path Analysis]
-        J[advisor.py<br/>Index Detection]
-    end
-    
-    A --> B
-    B --> C
-    B --> D
-    D --> E
-    A --> F
-    A --> G
-    
-    H --> I
-    I --> J
-    
-    style A fill:#e0e7ff
-    style B fill:#c7d2fe
-    style C fill:#a5b4fc
-    style D fill:#818cf8
-    style E fill:#6366f1
-    style F fill:#4f46e5
-    style G fill:#4338ca
-    style H fill:#86efac
-    style I fill:#4ade80
-    style J fill:#22c55e
-```
-
 ## About
 
 Visual SQL Plan Explorer is a learning project designed to transform PostgreSQL query execution plans into actionable performance insights. Built with FastAPI and React, the tool parses `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` output and provides interactive visualizations, automated bottleneck detection, and intelligent index recommendations.
